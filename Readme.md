@@ -73,7 +73,7 @@ curl -X POST "https://your-n8n-instance.com/webhook/generate-image" \
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yatharthsanghvi/n8n-image-generator.git
+   git clone https://github.com/YatharthSanghavi/n8n-image-generator.git
    cd n8n-image-generator
    ```
 
@@ -247,7 +247,7 @@ const customProvider = {
 ### Development Setup
 ```bash
 # Fork the repository
-git clone https://github.com/yatharthsanghvi/n8n-image-generator.git
+git clone https://github.com/YatharthSanghavi/n8n-image-generator.git
 cd n8n-image-generator
 
 # Install dependencies
@@ -286,7 +286,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yatharthsanghvi/n8n-image-generator&type=Date)](https://star-history.com/#yatharthsanghvi/n8n-image-generator&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=YatharthSanghavi/n8n-image-generator&type=Date)](https://star-history.com/#YatharthSanghavi/n8n-image-generator&Date)
 
 ---
 
@@ -294,5 +294,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <strong>Made with ❤️ by Yatharth</strong>
   <br>
   <br>
-  <a href="https://github.com/yatharthsanghvi/n8n-image-generator/stargazers">⭐ Star this repo if you found it helpful!</a>
+  <a href="https://github.com/YatharthSanghavi/n8n-image-generator/">⭐ Star this repo if you found it helpful!</a>
 </div>

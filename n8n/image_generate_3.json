@@ -1,0 +1,344 @@
+{
+  "name": "image_generate_3",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/generate-image",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -820,
+        300
+      ],
+      "id": "98b0280f-f8f4-4af2-9970-dab79807e46c",
+      "name": "Image Generation Webhook",
+      "webhookId": "8a3cd089-03cc-4967-8cee-59c15fe449e8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Rate limiting check\nconst currentTime = Date.now();\nconst rateLimitWindow = 60000; // 1 minute\nconst maxRequestsPerWindow = 10;\n\n// Get client IP or user identifier\nconst clientId = $input.first().json.headers['x-forwarded-for'] || \n                $input.first().json.headers['x-real-ip'] || \n                $input.first().json.headers['cf-connecting-ip'] || \n                'anonymous';\n\n// Simple in-memory rate limiting (in production, use Redis)\nif (!global.rateLimitStore) {\n  global.rateLimitStore = {};\n}\n\nif (!global.rateLimitStore[clientId]) {\n  global.rateLimitStore[clientId] = [];\n}\n\n// Clean old entries\nglobal.rateLimitStore[clientId] = global.rateLimitStore[clientId].filter(\n  timestamp => currentTime - timestamp < rateLimitWindow\n);\n\n// Check if rate limit exceeded\nif (global.rateLimitStore[clientId].length >= maxRequestsPerWindow) {\n  return {\n    rateLimitExceeded: true,\n    clientId,\n    requestCount: global.rateLimitStore[clientId].length,\n    resetTime: Math.min(...global.rateLimitStore[clientId]) + rateLimitWindow\n  };\n}\n\n// Add current request\nglobal.rateLimitStore[clientId].push(currentTime);\n\nreturn {\n  rateLimitExceeded: false,\n  clientId,\n  requestCount: global.rateLimitStore[clientId].length,\n  ...($input.first().json)\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        300
+      ],
+      "id": "695ef1ac-b071-46c4-a1a4-813cfbf5c004",
+      "name": "Rate Limiter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "rate-limit-check",
+              "leftValue": "={{ $json.rateLimitExceeded }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        300
+      ],
+      "id": "b5a035bb-0b87-4218-89ea-c37717615034",
+      "name": "Rate Limit Check"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "validation-1",
+              "leftValue": "={{ $json.query.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "validation-2",
+              "leftValue": "={{ $json.query.message.length }}",
+              "rightValue": 500,
+              "operator": {
+                "type": "number",
+                "operation": "smallerEqual"
+              }
+            },
+            {
+              "id": "validation-3",
+              "leftValue": "={{ $json.query.message.length }}",
+              "rightValue": 3,
+              "operator": {
+                "type": "number",
+                "operation": "largerEqual"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        200
+      ],
+      "id": "3358679c-ee5c-46ce-9349-c0c1ab5c4567",
+      "name": "Enhanced Input Validation"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Enhanced prompt processing and API configuration\nconst originalPrompt = $input.first().json.query.message;\nconst style = $input.first().json.query.style || 'photorealistic';\nconst size = $input.first().json.query.size || '1024x1024';\nconst seed = $input.first().json.query.seed || Math.floor(Math.random() * 1000000);\nconst model = $input.first().json.query.model || 'flux';\nconst quality = $input.first().json.query.quality || 'high';\n\n// Content filtering - basic inappropriate content detection\nconst inappropriateTerms = ['nude', 'naked', 'nsfw', 'explicit', 'sexual', 'porn', 'xxx'];\nconst containsInappropriate = inappropriateTerms.some(term => \n  originalPrompt.toLowerCase().includes(term.toLowerCase())\n);\n\nif (containsInappropriate) {\n  return {\n    error: 'Content policy violation',\n    message: 'The prompt contains inappropriate content that cannot be processed.',\n    code: 'CONTENT_VIOLATION'\n  };\n}\n\n// Enhanced prompt based on style with better descriptions\nlet enhancedPrompt = originalPrompt;\nlet styleModifiers = '';\n\nswitch(style.toLowerCase()) {\n  case 'artistic':\n    styleModifiers = 'oil painting, masterpiece, highly detailed, vibrant colors, professional artwork, fine art';\n    break;\n  case 'photorealistic':\n    styleModifiers = 'photorealistic, high resolution, professional photography, 8k, ultra-detailed, sharp focus';\n    break;\n  case 'cartoon':\n    styleModifiers = 'cartoon style, animated, colorful, Disney-like, cel-shaded, illustration';\n    break;\n  case 'cyberpunk':\n    styleModifiers = 'cyberpunk style, neon lights, futuristic, dark atmosphere, sci-fi, digital art';\n    break;\n  case 'fantasy':\n    styleModifiers = 'fantasy art, magical, mystical, epic, detailed fantasy illustration';\n    break;\n  case 'minimalist':\n    styleModifiers = 'minimalist, clean, simple, elegant, modern design';\n    break;\n  case 'vintage':\n    styleModifiers = 'vintage style, retro, classic, aged, nostalgic';\n    break;\n  default:\n    styleModifiers = 'high quality, detailed, professional';\n}\n\n// Quality modifiers\nlet qualityModifiers = '';\nswitch(quality.toLowerCase()) {\n  case 'high':\n    qualityModifiers = 'best quality, ultra detailed, 4k, hdr';\n    break;\n  case 'medium':\n    qualityModifiers = 'good quality, detailed';\n    break;\n  case 'low':\n    qualityModifiers = 'standard quality';\n    break;\n}\n\nenhancedPrompt = `${originalPrompt}, ${styleModifiers}, ${qualityModifiers}`;\n\n// Parse size\nconst [width, height] = size.split('x').map(Number);\n\n// Validate dimensions\nif (width > 2048 || height > 2048 || width < 256 || height < 256) {\n  return {\n    error: 'Invalid dimensions',\n    message: 'Image dimensions must be between 256x256 and 2048x2048',\n    code: 'INVALID_DIMENSIONS'\n  };\n}\n\n// Multiple API providers for better reliability\nconst apiConfigs = [\n  {\n    name: 'Pollinations AI - Flux',\n    url: `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?model=flux&width=${width}&height=${height}&seed=${seed}&enhance=true`,\n    priority: 1\n  },\n  {\n    name: 'Pollinations AI - Turbo',\n    url: `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?model=turbo&width=${width}&height=${height}&seed=${seed}`,\n    priority: 2\n  },\n  {\n    name: 'Pollinations AI - Default',\n    url: `https://image.pollinations.ai/prompt/${encodeURIComponent(enhancedPrompt)}?width=${width}&height=${height}&seed=${seed}`,\n    priority: 3\n  }\n];\n\nreturn {\n  originalPrompt,\n  enhancedPrompt,\n  style,\n  size,\n  width,\n  height,\n  seed,\n  model,\n  quality,\n  apiConfigs,\n  timestamp: new Date().toISOString(),\n  requestId: `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        60,
+        100
+      ],
+      "id": "dd1fb1de-cb3b-4d08-9eeb-2ba33e18279e",
+      "name": "Enhanced Prompt Processor"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "content-check",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        280,
+        100
+      ],
+      "id": "50c98585-23f3-4b54-b68f-0c682fa9dd47",
+      "name": "Content Filter Check"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.apiConfigs[0].url }}",
+        "options": {
+          "timeout": 45000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        500,
+        0
+      ],
+      "id": "cdece44a-4548-4074-a47e-d4899e196449",
+      "name": "Primary Image API"
+    },
+    {
+      "parameters": {
+        "enableResponseOutput": true,
+        "respondWith": "binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        720,
+        0
+      ],
+      "id": "66fd7faa-92d6-4123-b24a-a5e300c8f9c6",
+      "name": "Success Response"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -160,
+        400
+      ],
+      "id": "3d3213ac-c431-4622-b69d-bb0d568d5234",
+      "name": "Rate Limit Response"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        60,
+        300
+      ],
+      "id": "2bfd0d94-e16f-44df-a798-c1cef3c9be73",
+      "name": "Validation Error Response"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        500,
+        200
+      ],
+      "id": "49113634-2a58-4fd1-ad35-55d261737604",
+      "name": "Content Error Response"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Image Generation Webhook": {
+      "main": [
+        [
+          {
+            "node": "Rate Limiter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limiter": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rate Limit Check": {
+      "main": [
+        [
+          {
+            "node": "Rate Limit Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enhanced Input Validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enhanced Input Validation": {
+      "main": [
+        [
+          {
+            "node": "Validation Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enhanced Prompt Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enhanced Prompt Processor": {
+      "main": [
+        [
+          {
+            "node": "Content Filter Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Filter Check": {
+      "main": [
+        [
+          {
+            "node": "Content Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Primary Image API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Primary Image API": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "93a11c4e-c145-4a69-9353-c9384f95d02c",
+  "meta": {
+    "instanceId": "a89ea96eab4d922e0bba02c26045ca5613c25df39ecbad3c380d75d6c9075eed"
+  },
+  "id": "n4G8tolJ4U684UIZ",
+  "tags": []
+}

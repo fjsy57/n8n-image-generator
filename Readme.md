@@ -35,13 +35,13 @@
 ### 1. Import n8n Workflow
 ```bash
 # Import the workflow JSON into your n8n instance
-# File: image_generate_3.json
+# File: n8n/image_generate_3.json
 ```
 
 ### 2. Set Up Frontend
 ```bash
 # Navigate to the React app directory
-cd frontend
+cd n8n-image-generator
 
 # Install dependencies
 npm install
@@ -73,8 +73,8 @@ curl -X POST "https://your-n8n-instance.com/webhook/generate-image" \
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/ai-image-generator.git
-   cd ai-image-generator
+   git clone https://github.com/yatharthsanghvi/n8n-image-generator.git
+   cd n8n-image-generator
    ```
 
 2. **Import n8n Workflow**
@@ -87,25 +87,13 @@ curl -X POST "https://your-n8n-instance.com/webhook/generate-image" \
    - Copy the webhook URL from n8n
    - Update the endpoint in your frontend configuration
 
-4. **Install Frontend Dependencies**
-   ```bash
-   cd frontend
-   npm install
-   ```
-
 5. **Configure Environment Variables**
    ```bash
-   # Create .env file in frontend directory
-   REACT_APP_API_URL=https://your-n8n-webhook-url.com
-   REACT_APP_API_KEY=your-api-key-if-needed
+   # Go to src/ImageGenerator.tsx paste your n8n url here under try section
+   webhookUrl=https://your-n8n-webhook-url.com
    ```
 
 ## 📖 API Documentation
-
-### Endpoint
-```
-POST /webhook/generate-image
-```
 
 ### Request Body
 ```json
@@ -176,23 +164,6 @@ The included React frontend provides a beautiful, user-friendly interface for yo
 - **Style Presets**: Quick style selection
 - **Advanced Options**: Seed, model, quality controls
 
-### Customization
-```javascript
-// src/config.js
-export const API_CONFIG = {
-  baseURL: process.env.REACT_APP_API_URL,
-  timeout: 45000,
-  retries: 3
-};
-
-export const STYLES = {
-  photorealistic: 'Photorealistic',
-  artistic: 'Artistic',
-  cartoon: 'Cartoon',
-  // Add custom styles
-};
-```
-
 ## ⚙️ Configuration
 
 ### n8n Workflow Settings
@@ -220,14 +191,6 @@ export const STYLES = {
      // Add custom providers
    ];
    ```
-
-### Environment Variables
-
-Create a `.env` file in your project root:
-```env
-# n8n Configuration
-N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/generate-image
-```
 
 ## 🚀 Deployment
 
@@ -281,34 +244,17 @@ const customProvider = {
 };
 ```
 
-### Webhooks Integration
-Set up webhooks for various events:
-```javascript
-const webhookEvents = {
-  'image.generated': 'https://your-app.com/webhook/image-generated',
-  'rate.limit.exceeded': 'https://your-app.com/webhook/rate-limit',
-  'content.filtered': 'https://your-app.com/webhook/content-filtered'
-};
-```
-
-## 🤝 Contributing
-
-We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
-
 ### Development Setup
 ```bash
 # Fork the repository
-git clone https://github.com/yourusername/ai-image-generator.git
-cd ai-image-generator
+git clone https://github.com/yatharthsanghvi/n8n-image-generator.git
+cd n8n-image-generator
 
 # Install dependencies
 npm install
 
 # Start development server
 npm run dev
-
-# Run tests
-npm test
 ```
 
 ### Contribution Areas
@@ -336,14 +282,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **n8n Team**: For the amazing automation platform
 - **Pollinations AI**: For providing free AI image generation
 - **React Community**: For the excellent frontend framework
-- **Contributors**: Everyone who has contributed to this project
 
-## 📞 Support
-
-- **Documentation**: [Wiki](https://github.com/yourusername/ai-image-generator/wiki)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/ai-image-generator/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-image-generator/discussions)
-- **Email**: support@your-domain.com
 
 ## 🌟 Star History
 

@@ -1,6 +1,6 @@
-# 🎨 AI Image Generator API
+# 🎨 AI Image Generator
 
-> **Production-ready AI image generation API built with n8n, featuring advanced rate limiting, content filtering, and multiple AI providers**
+> **Production-ready AI image generator built with n8n, featuring advanced rate limiting, content filtering, and multiple AI providers**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![n8n](https://img.shields.io/badge/n8n-workflow-FF6B6B.svg)](https://n8n.io/)

